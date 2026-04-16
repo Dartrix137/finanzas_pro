@@ -1,0 +1,199 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =============================================
+   LA FILIAL COLOR PALETTE
+   Primary Blue: #004fff
+   Dark Background: #0a0a0a
+   Light Background: #ffffff
+   ============================================= */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-poppins);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-lf-blue: #004fff;
+  --color-lf-blue-hover: #0b4eff;
+  --color-lf-dark: #0a0a0a;
+  --color-lf-green: #25D366;
+  --color-lf-amber: #f59e0b;
+  --color-lf-red: #ef4444;
+}
+
+:root {
+  --radius: 0.625rem;
+  /* La Filial Light Theme */
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+  --primary: #004fff;
+  --primary-foreground: #ffffff;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #0a0a0a;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --accent: #f0f4ff;
+  --accent-foreground: #004fff;
+  --destructive: #ef4444;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #004fff;
+  --chart-1: #004fff;
+  --chart-2: #0b4eff;
+  --chart-3: #3b82f6;
+  --chart-4: #60a5fa;
+  --chart-5: #93c5fd;
+  --sidebar: #fafafa;
+  --sidebar-foreground: #0a0a0a;
+  --sidebar-primary: #004fff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0f4ff;
+  --sidebar-accent-foreground: #004fff;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #004fff;
+}
+
+.dark {
+  /* La Filial Dark Theme */
+  --background: #0a0a0a;
+  --foreground: #f5f5f5;
+  --card: #141414;
+  --card-foreground: #f5f5f5;
+  --popover: #141414;
+  --popover-foreground: #f5f5f5;
+  --primary: #004fff;
+  --primary-foreground: #ffffff;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #f5f5f5;
+  --muted: #1a1a1a;
+  --muted-foreground: #a3a3a3;
+  --accent: #0d1a33;
+  --accent-foreground: #4d8bff;
+  --destructive: #ef4444;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: #004fff;
+  --chart-1: #004fff;
+  --chart-2: #0b4eff;
+  --chart-3: #3b82f6;
+  --chart-4: #60a5fa;
+  --chart-5: #93c5fd;
+  --sidebar: #111111;
+  --sidebar-foreground: #f5f5f5;
+  --sidebar-primary: #004fff;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #0d1a33;
+  --sidebar-accent-foreground: #4d8bff;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #004fff;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-poppins), 'Poppins', sans-serif;
+  }
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 10px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #333333;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+.animate-fadeInScale {
+  animation: fadeInScale 0.3s ease-out forwards;
+}
+.animate-slideInLeft {
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+
+/* Print styles */
+@media print {
+  .no-print { display: none !important; }
+  body { background: white !important; }
+  .printable-area { padding: 0 !important; margin: 0 !important; }
+}
+
+/* Recharts responsive */
+.recharts-responsive-container {
+  min-height: 0;
+}
+
+/* Number input - remove spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
