@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useSyncExternalStore, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Sidebar from '@/components/finanzaspro/Sidebar';
 import Dashboard from '@/components/finanzaspro/Dashboard';
 import ProjectsView from '@/components/finanzaspro/ProjectsView';
@@ -8,65 +8,43 @@ import PortfolioView from '@/components/finanzaspro/PortfolioView';
 import GoalsView from '@/components/finanzaspro/GoalsView';
 import Login from '@/components/finanzaspro/Login';
 import { ViewState, Project, MonthlyGoal, User } from '@/lib/types';
-import { MOCK_PROJECTS, MOCK_GOALS, safeSetItem, safeRemoveItem } from '@/lib/constants';
-
-/* ── Safe localStorage read (SSR-aware) ── */
-function readLS<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback;
-  try {
-    const raw = localStorage.getItem(key);
-    if (raw === null) return fallback;
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
-  }
-}
+import { MOCK_PROJECTS, MOCK_GOALS, safeSetItem, safeRemoveItem, safeGetItem } from '@/lib/constants';
 
 /* ── Hook: hash-based navigation ── */
 function useHash(): ViewState {
-  const getSnapshot = useCallback((): ViewState => {
-    const h = window.location.hash.replace('#', '');
-    if (['dashboard', 'proyectos', 'cartera', 'metas'].includes(h)) return h as ViewState;
-    return 'dashboard';
+  const [hash, setHash] = useState<ViewState>('dashboard');
+
+  useEffect(() => {
+    function onHashChange() {
+      const h = window.location.hash.replace('#', '');
+      if (['dashboard', 'proyectos', 'cartera', 'metas'].includes(h)) {
+        setHash(h as ViewState);
+      }
+    }
+    onHashChange();
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
-  return useSyncExternalStore(
-    (cb) => {
-      window.addEventListener('hashchange', cb);
-      return () => window.removeEventListener('hashchange', cb);
-    },
-    getSnapshot,
-    () => 'dashboard' as ViewState
-  );
+  return hash;
 }
 
-/* ── Hook: localStorage-backed state with useSyncExternalStore ── */
+/* ── Hook: localStorage-backed state (simple, SSR-safe) ── */
 function useStoredState<T>(key: string, fallback: T): [T, React.Dispatch<React.SetStateAction<T>>] {
-  const subscribe = useCallback(
-    (cb: () => void) => {
-      window.addEventListener('storage', cb);
-      return () => window.removeEventListener('storage', cb);
-    },
-    []
-  );
+  const [value, setValue] = useState<T>(() => safeGetItem(key, fallback));
 
-  const getSnapshot = useCallback(() => readLS(key, fallback), [key, fallback]);
-  const getServerSnapshot = useCallback(() => fallback, [fallback]);
-
-  const value = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-
-  const setValue: React.Dispatch<React.SetStateAction<T>> = useCallback(
+  const wrappedSetValue: React.Dispatch<React.SetStateAction<T>> = useCallback(
     (action) => {
-      const current = readLS(key, fallback);
-      const next = typeof action === 'function' ? (action as (p: T) => T)(current) : action;
-      safeSetItem(key, next);
-      // Trigger storage event for cross-tab sync
-      window.dispatchEvent(new StorageEvent('storage', { key }));
+      setValue((prev) => {
+        const next = typeof action === 'function' ? (action as (p: T) => T)(prev) : action;
+        safeSetItem(key, next);
+        return next;
+      });
     },
-    [key, fallback]
+    [key]
   );
 
-  return [value, setValue];
+  return [value, wrappedSetValue];
 }
 
 export default function Home() {
