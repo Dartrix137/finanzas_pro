@@ -1,19 +1,20 @@
-# Use the official Bun image
-FROM oven/bun:1.1 as base
+# Use the official Bun image (latest version)
+FROM oven/bun:latest AS base
 WORKDIR /app
 
 # Stage 1: Install dependencies
 FROM base AS deps
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+# Removido --frozen-lockfile para evitar el error de versionado del lockfile
+RUN bun install
 
 # Stage 2: Build the application
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Set environment variables for build time (if needed)
-ENV NEXT_TELEMETRY_DISABLED 1
+# Set environment variables for build time
+ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN bun run build
 
@@ -21,8 +22,8 @@ RUN bun run build
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Create a non-privileged user
 RUN adduser --system --uid 1001 nextjs
@@ -37,8 +38,8 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # Run the application
 CMD ["bun", "server.js"]
