@@ -5,7 +5,6 @@ WORKDIR /app
 # Stage 1: Install dependencies
 FROM base AS deps
 COPY package.json bun.lock ./
-# Removido --frozen-lockfile para evitar el error de versionado del lockfile
 RUN bun install
 
 # Stage 2: Build the application
@@ -25,16 +24,10 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create a non-privileged user
-RUN adduser --system --uid 1001 nextjs
-RUN addgroup --system --gid 1001 nodejs
-
-# Copy the standalone build from builder
+# Copiamos los archivos necesarios del builder
 COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 
 EXPOSE 3000
 
