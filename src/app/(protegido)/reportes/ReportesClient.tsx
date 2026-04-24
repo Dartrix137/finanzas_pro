@@ -42,10 +42,8 @@ export default function ReportesClient({ areas, metas, abonos, userRole, userAre
       };
     });
 
-    // Anual Global
-    const annualTarget = filteredMetas
-      .filter((m: any) => m.periodo === currentYear && m.tipo === 'anual')
-      .reduce((acc: number, m: any) => acc + m.valor, 0);
+    // Anual Global (Suma de todas las metas mensuales calculadas)
+    const annualTarget = monthlyData.reduce((acc, m) => acc + m.target, 0);
 
     const annualActual = monthlyData.reduce((acc, m) => acc + m.actual, 0);
 
