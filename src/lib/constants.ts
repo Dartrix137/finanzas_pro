@@ -1,29 +1,9 @@
-import { Project, MonthlyGoal, User } from './types';
+import { Project, MonthlyGoal } from './types';
 
 const CURRENT_YEAR = new Date().getFullYear();
 
 export const CURRENT_YEAR_STR = String(CURRENT_YEAR);
 
-export const USERS: User[] = [
-  {
-    id: '1',
-    name: 'Desarrollo y Automatizaciones',
-    role: 'ADMIN',
-    avatar: 'https://picsum.photos/seed/dev-automation/100/100',
-  },
-  {
-    id: '2',
-    name: 'Multimedia',
-    role: 'ADMIN',
-    avatar: 'https://picsum.photos/seed/multimedia-admin/100/100',
-  },
-  {
-    id: '3',
-    name: 'Trafficker',
-    role: 'ADMIN',
-    avatar: 'https://picsum.photos/seed/trafficker-admin/100/100',
-  },
-];
 
 export const MOCK_PROJECTS: Project[] = [
   {
@@ -33,7 +13,6 @@ export const MOCK_PROJECTS: Project[] = [
     amount: 45000000,
     paid: 45000000,
     status: 'pagado',
-    category: 'Consultoría',
     date: '15 Oct 2024',
   },
   {
@@ -43,7 +22,6 @@ export const MOCK_PROJECTS: Project[] = [
     amount: 12500000,
     paid: 9375000,
     status: 'facturado',
-    category: 'Desarrollo',
     date: '15 Nov 2024',
   },
   {
@@ -53,7 +31,6 @@ export const MOCK_PROJECTS: Project[] = [
     amount: 4800000,
     paid: 0,
     status: 'en_espera',
-    category: 'Diseño',
     date: '05 Dic 2024',
   },
   {
@@ -63,7 +40,6 @@ export const MOCK_PROJECTS: Project[] = [
     amount: 12800000,
     paid: 0,
     status: 'pendiente',
-    category: 'Consultoría',
     date: '20 Ene 2025',
   },
   {
@@ -73,7 +49,6 @@ export const MOCK_PROJECTS: Project[] = [
     amount: 89200000,
     paid: 35680000,
     status: 'facturado',
-    category: 'Desarrollo',
     date: '22 Feb 2025',
   },
 ];
@@ -93,7 +68,6 @@ export const MOCK_GOALS: MonthlyGoal[] = [
   { month: 'Dic', target: 35000000, actual: 0 },
 ];
 
-export const CATEGORIES = ['Desarrollo', 'Diseño', 'Automatización', 'Consultoría'] as const;
 
 export const MONTHS = [
   'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
@@ -134,13 +108,6 @@ export const STATUS_CONFIG: Record<string, { label: string; className: string }>
   },
 };
 
-/** Category icon map */
-export const CATEGORY_ICONS: Record<string, string> = {
-  Desarrollo: 'terminal',
-  Diseño: 'palette',
-  Automatización: 'smart_toy',
-  'Consultoría': 'settings_suggest',
-};
 
 /** Safe localStorage helper */
 export function safeGetItem<T>(key: string, fallback: T): T {

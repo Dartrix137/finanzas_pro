@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { cookies } from "next/headers";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -21,13 +22,16 @@ export const viewport: Viewport = {
   themeColor: "#004fff",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const isDark = cookieStore.get('dark_mode')?.value === 'true';
+
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning className={isDark ? 'dark' : ''}>
       <head>
         <link
           href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
@@ -44,3 +48,4 @@ export default function RootLayout({
     </html>
   );
 }
+

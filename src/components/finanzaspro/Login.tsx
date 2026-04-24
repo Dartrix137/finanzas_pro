@@ -1,13 +1,35 @@
 'use client';
 
-import React from 'react';
-import { User } from '@/lib/types';
+import React, { useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
-interface LoginProps {
-  onLogin: (user: User) => void;
-}
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const supabase = createClient();
+  const router = useRouter();
 
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      setError('Credenciales inválidas. Por favor intenta de nuevo.');
+      setLoading(false);
+    } else {
+      router.push('/dashboard');
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-6 overflow-y-auto">
       <div className="w-full max-w-lg flex flex-col items-center animate-fadeInScale">
@@ -24,48 +46,61 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           </p>
         </div>
 
-        {/* User Selector Card */}
-        <div className="w-full max-w-md bg-card rounded-2xl p-8 shadow-xl border border-border">
+        {/* User Login Form */}
+        <div className="w-full max-w-sm bg-card rounded-2xl p-8 shadow-xl border border-border">
           <h2 className="text-lg font-bold text-card-foreground mb-6 text-center">
-            Selecciona tu perfil
+            Inicia Sesión
           </h2>
 
-          <div className="space-y-3">
-            {([
-              { id: '1', name: 'Desarrollo y Automatizaciones', role: 'ADMIN', avatar: 'https://picsum.photos/seed/dev-automation/100/100' },
-              { id: '2', name: 'Multimedia', role: 'ADMIN', avatar: 'https://picsum.photos/seed/multimedia-admin/100/100' },
-              { id: '3', name: 'Trafficker', role: 'ADMIN', avatar: 'https://picsum.photos/seed/trafficker-admin/100/100' },
-            ] as User[]).map((user) => (
-              <button
-                key={user.id}
-                onClick={() => onLogin(user)}
-                className="w-full flex items-center gap-4 p-4 rounded-xl border border-border hover:border-primary/30 hover:bg-accent/50 transition-all group text-left"
-              >
-                <div className="relative">
-                  <img
-                    src={user.avatar}
-                    alt={user.name}
-                    className="w-11 h-11 rounded-full object-cover border-2 border-white shadow-sm group-hover:scale-105 transition-transform"
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-card-foreground leading-tight truncate">
-                    {user.name}
-                  </p>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
-                    {user.role}
-                  </p>
-                </div>
-                <span className="material-icons-round text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all text-xl">
-                  chevron_right
-                </span>
-              </button>
-            ))}
-          </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-2 text-left">
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
+                Correo Electrónico
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                title="Correo Electrónico"
+                placeholder="tu@correo.com"
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm font-medium text-foreground outline-none focus:ring-2 focus:ring-primary transition-all"
+              />
+            </div>
+
+            <div className="space-y-2 text-left">
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider block">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                required
+                value={password}
+                title="Contraseña"
+                placeholder="••••••••"
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm font-medium text-foreground outline-none focus:ring-2 focus:ring-primary transition-all"
+              />
+            </div>
+
+            {error && (
+              <p className="text-xs font-bold text-destructive text-center mt-2">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center py-3 px-4 bg-primary text-primary-foreground hover:bg-primary/90 font-bold rounded-xl transition-all disabled:opacity-50 mt-6 shadow-lg shadow-primary/20"
+            >
+              {loading ? 'Entrando...' : 'Ingresar'}
+            </button>
+          </form>
 
           <div className="mt-8 pt-6 border-t border-border">
             <p className="text-center text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-loose max-w-[280px] mx-auto">
-              Selecciona un perfil para acceder al sistema de gestión financiera.
+              Ingresa tus credenciales autorizadas por administración.
             </p>
           </div>
         </div>
@@ -76,6 +111,4 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       </div>
     </div>
   );
-};
-
-export default Login;
+}
