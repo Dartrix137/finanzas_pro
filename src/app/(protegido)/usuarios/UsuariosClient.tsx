@@ -174,6 +174,11 @@ export default function UsuariosClient({ usuarios, areas, currentUserId }: any) 
           </h3>
           <p className="text-muted-foreground text-sm mb-6 font-medium">
             {editingUser ? `Modificando acceso para ${editingUser.nombre}` : 'Registra un compañero de equipo enviándole acceso automático'}
+            {editingUser?.id === currentUserId && (
+              <span className="block mt-2 text-[10px] bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400 px-2 py-1 rounded-md font-bold uppercase tracking-wider w-fit">
+                No puedes cambiar tu propio rol por seguridad
+              </span>
+            )}
           </p>
           <form onSubmit={handleSubmit} className="space-y-5">
             {!editingUser && (
@@ -213,9 +218,10 @@ export default function UsuariosClient({ usuarios, areas, currentUserId }: any) 
             <div>
               <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1">Poder de Acceso (Rol)</label>
               <select
+                disabled={editingUser?.id === currentUserId}
                 value={formData.rol}
                 onChange={e => setFormData({ ...formData, rol: e.target.value, area_id: e.target.value === 'superadmin' ? '' : formData.area_id })}
-                className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm font-medium text-foreground outline-none focus:ring-2 focus:ring-primary"
+                className="w-full bg-secondary border-none rounded-xl px-4 py-3 text-sm font-medium text-foreground outline-none focus:ring-2 focus:ring-primary disabled:opacity-50 cursor-not-allowed"
               >
                 <option value="usuario">Usuario Estándar (Sólo gestiona sus proyectos)</option>
                 <option value="director">Director de Área (Gestiona todo bajo un área)</option>
